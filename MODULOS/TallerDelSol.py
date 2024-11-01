@@ -83,7 +83,7 @@ def generar_word(remision_data, total, total_con_descuento):
     doc.save("remision.docx")
 
 # Configuración de la app en Streamlit
-st.title("Generador de Remisiones")
+st.subheader("Generador de Remisiones")
 
 # Inputs del usuario
 proveedor_input = st.text_input("Nombre del Proveedor")
