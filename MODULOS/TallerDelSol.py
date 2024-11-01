@@ -4,8 +4,8 @@ from fpdf import FPDF
 from docx import Document
 
 
-def app():
-    st.title("Taller del Sol")
+
+st.title("Taller del Sol")
 
 def app():
     st.title("Prueba")
