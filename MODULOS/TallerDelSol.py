@@ -5,7 +5,10 @@ from docx import Document
 
 
 def app():
-    st.title("Taller Del Sol")
+    st.title("Taller del Sol")
+
+def app():
+    st.title("Prueba")
 
 # Cargar datos de proveedores y productos desde archivos Excel
 proveedores_df = pd.read_excel("proveedores.xlsx")  # Asegúrate de tener este archivo
@@ -83,7 +86,7 @@ def generar_word(remision_data, total, total_con_descuento):
     doc.save("remision.docx")
 
 # Configuración de la app en Streamlit
-st.subheader("Generador de Remisiones")
+st.title("Generador de Remisiones")
 
 # Inputs del usuario
 proveedor_input = st.text_input("Nombre del Proveedor")
