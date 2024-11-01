@@ -4,9 +4,9 @@ from fpdf import FPDF
 from docx import Document
 
 
-
-
-st.title("Generador de Remisiones")
+st.title("Taller del Sol")
+def app():
+    st.title("Generador de Remisiones")
 
 # Cargar datos de proveedores y productos desde archivos Excel
 proveedores_df = pd.read_excel("proveedores.xlsx")  # Asegúrate de tener este archivo
