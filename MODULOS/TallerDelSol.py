@@ -5,10 +5,8 @@ from docx import Document
 
 
 
-st.title("Taller del Sol")
 
-def app():
-    st.title("Prueba")
+st.title("Generador de Remisiones")
 
 # Cargar datos de proveedores y productos desde archivos Excel
 proveedores_df = pd.read_excel("proveedores.xlsx")  # Asegúrate de tener este archivo
@@ -85,13 +83,34 @@ def generar_word(remision_data, total, total_con_descuento):
 
     doc.save("remision.docx")
 
-# Configuración de la app en Streamlit
-st.title("Generador de Remisiones")
-
 # Inputs del usuario
 proveedor_input = st.text_input("Nombre del Proveedor")
-isbn_cantidades = st.text_area("Ingrese ISBN y Cantidades (Formato: ISBN,Cantidad por línea)")
+isbn_input = st.text_input("ISBN del Producto")
+cantidad_input = st.number_input("Cantidad", min_value=1, step=1)
 descuento = st.number_input("Descuento (%)", min_value=0.0, max_value=100.0)
+
+# Lista para almacenar los productos agregados
+productos = []
+
+# Botón para agregar el producto a la lista
+if st.button("Agregar Producto"):
+    if isbn_input and cantidad_input:
+        try:
+            producto_data = buscar_producto(isbn_input.strip())
+            productos.append({
+                "ISBN": isbn_input.strip(),
+                "nombre": producto_data["nombre"],
+                "cantidad": cantidad_input,
+                "precio": producto_data["precio"] * cantidad_input
+            })
+            st.success(f"Producto {isbn_input} agregado.")
+        except IndexError:
+            st.error("Producto no encontrado.")
+
+# Mostrar productos agregados
+st.write("Productos agregados:")
+for prod in productos:
+    st.write(f"ISBN: {prod['ISBN']}, Nombre: {prod['nombre']}, Cantidad: {prod['cantidad']}, Precio: ${prod['precio']:.2f}")
 
 if st.button("Generar Remisión"):
     # Buscar información del proveedor
@@ -101,27 +120,8 @@ if st.button("Generar Remisión"):
         st.error("Proveedor no encontrado.")
         st.stop()
 
-    # Procesar productos
-    total = 0.0
-    productos = []
-    for line in isbn_cantidades.strip().split("\n"):
-        isbn, cantidad = line.split(",")
-        cantidad = int(cantidad)
-        try:
-            producto_data = buscar_producto(isbn.strip())
-            precio_total = producto_data["precio"] * cantidad
-            total += precio_total
-            productos.append({
-                "ISBN": isbn.strip(),
-                "nombre": producto_data["nombre"],
-                "cantidad": cantidad,
-                "precio": precio_total
-            })
-        except IndexError:
-            st.error(f"Producto con ISBN {isbn.strip()} no encontrado.")
-            continue
-
-    # Calcular total con descuento
+    # Calcular el total y el total con descuento
+    total = sum([prod["precio"] for prod in productos])
     total_con_descuento = total * (1 - descuento / 100)
 
     # Crear remisión
@@ -138,8 +138,3 @@ if st.button("Generar Remisión"):
     st.success("Remisión generada con éxito.")
     st.download_button("Descargar PDF", data=open("remision.pdf", "rb"), file_name="remision.pdf")
     st.download_button("Descargar Word", data=open("remision.docx", "rb"), file_name="remision.docx")
-
-
-
-
-
